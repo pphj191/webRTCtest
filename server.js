@@ -31,6 +31,11 @@ io.on('connection', function (socket) {
         io.to(event.caller).emit('answer', event.sdp);
     });
 
+    socket.on('err', function (event) {
+        console.log('collecting erroes = ', event);
+        // io.to(event.caller).emit('answer', event.sdp);
+    });
+
 });
 
 http.listen(3000, function () {
