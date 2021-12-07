@@ -1,6 +1,10 @@
 const express = require('express');
 const app = express();
-var http = require('http').Server(app);
+const fs = require('fs');
+
+const options = { key: fs.readFileSync('./privkey.pem'), cert: fs.readFileSync('./public.pem') };
+
+var http = require('https').Server(options, app);
 var io = require('socket.io')(http);
 
 app.use(express.static('public'));

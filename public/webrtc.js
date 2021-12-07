@@ -19,7 +19,7 @@ let iceServers = {
 }
 
 const streamConstraints = {
-    // video: false,
+    video: false,
     // {
     //     width: {
     //         min: '640',
@@ -43,20 +43,18 @@ $(document).ready(function () {
     $('#startBtn').click(function () {
         socket.emit('create', function (res) {
             console.log('send create');
-            socket.emit('err', {err : "1"});
+            
             $('#caller_code').val(res);
-            socket.emit('err', {err : "2"});
             caller = res;
-            socket.emit('err', {err : "3"});
             showCreate();
-            socket.emit('err', {err : "4"});
+            
             UIkit.tooltip('#caller_code').show();
-            socket.emit('err', {err : "5"});
+            
             navigator.mediaDevices.getUserMedia(streamConstraints).then(function (stream) {
-                socket.emit('err', {err : "noerr"});
+                
                 addLocalStream(stream);
                 isCaller = true;
-                socket.emit('err', {err : "noerr"});
+                
             }).catch(function (err) {
                 socket.emit('err', err);
                 console.log('An error ocurred when accessing media devices', err);
