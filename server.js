@@ -6,7 +6,7 @@ const options = { key: fs.readFileSync('./privkey.pem'), cert: fs.readFileSync('
 
 var http = require('https').Server(options, app);
 var io = require('socket.io')(http);
-
+var numberDB={}
 app.use(express.static('public'));
 
 io.on('connection', function (socket) {
@@ -15,9 +15,14 @@ io.on('connection', function (socket) {
         callback(socket.id);
     });
 
+    socket.on('number', function(number){
+        console.log('number from', socket.id);
+        numberDB[number]=socket.id
+    });
+
     socket.on('join', function (code) {
-        console.log('receiver joined', socket.id, 'sending join status to', code);
-        io.to(code).emit('ready', socket.id);
+        console.log('receiver joined', socket.id, 'sending join status to', numberDB[code]);
+        io.to(numberDB[code]).emit('ready', socket.id);
     });
 
     socket.on('candidate', function (event) {

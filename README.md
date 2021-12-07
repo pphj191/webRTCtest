@@ -1,3 +1,8 @@
+
+git사용법
+https://backlog.com/git-tutorial/kr/stepup/stepup2_3.html
+
+
 A simple video/audio peer-to-peer calling website implemented using WebRTC.
 
 # Steps to Run

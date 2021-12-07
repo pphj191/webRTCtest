@@ -43,13 +43,11 @@ $(document).ready(function () {
     $('#startBtn').click(function () {
         socket.emit('create', function (res) {
             console.log('send create');
-            
-            $('#caller_code').val(res);
+            window.navigator.vibrate([200, 100, 200]);
+            $('#caller_number').val();
             caller = res;
             showCreate();
-            
-            UIkit.tooltip('#caller_code').show();
-            
+            // UIkit.tooltip('#caller_code').show();
             navigator.mediaDevices.getUserMedia(streamConstraints).then(function (stream) {
                 
                 addLocalStream(stream);
@@ -59,7 +57,7 @@ $(document).ready(function () {
                 socket.emit('err', err);
                 console.log('An error ocurred when accessing media devices', err);
             });
-            socket.emit('err', {err : "7"});
+            
         });
     });
 
@@ -74,6 +72,8 @@ $(document).ready(function () {
 
     $('#startCallBtn').click(function () {
         showCallScreen();
+        const number = $('#caller_number').val();
+        socket.emit('number', number);
     });
 
     socket.on('ready', function (code) {
