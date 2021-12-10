@@ -69,6 +69,19 @@ $(document).ready(function () {
     //---------------------------------------------------------------------------------------
     //---------------------------------------------------------------------------------------
     //---------------------------------------------------------------------------------------
+    for(i=1;i<10;i++){
+        $('#btn_'+String(i)).click(function () {
+            console.log($(this).text());
+            // console.log(i);
+            document.getElementById("caller_number").value=$('#caller_number').val()+$(this).text();
+        });
+    }
+    // $('#btn_1').click(function () {
+    //     document.getElementById("caller_number").value=$('#caller_number').val()+'1';
+    // });
+    // $('#btn_2').click(function () {
+    //     document.getElementById("caller_number").value=$('#caller_number').val()+'1';
+    // });
 
     $('#startCallBtn').click(function () {
         showCallScreen();
