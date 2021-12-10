@@ -1,13 +1,18 @@
 const express = require('express');
 const app = express();
+const apphttp = express();
 const fs = require('fs');
 
 const options = { key: fs.readFileSync('./privkey.pem'), cert: fs.readFileSync('./public.pem') };
 
-var http = require('https').Server(options, app);
-var io = require('socket.io')(http);
+var https = require('https').Server(options, app);
+var io = require('socket.io')(https);
 var numberDB={}
 app.use(express.static('public'));
+apphttp.get('/', (req,res)=>{
+    // console.log(req.hostname, "==",req.url)
+    res.redirect('https://' + req.hostname + req.url);
+});
 
 io.on('connection', function (socket) {
     socket.on('create', function (callback) {
@@ -47,6 +52,9 @@ io.on('connection', function (socket) {
 
 });
 
-http.listen(3000, function () {
-    console.log('listening on *:3000');
+https.listen(443, function () {
+    console.log('listening on *:443');
+});
+apphttp.listen(80, function () {
+    console.log('listening on *:80');
 });
