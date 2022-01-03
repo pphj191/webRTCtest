@@ -1,5 +1,5 @@
 {
-  "name": "webrtc-audio-demo",
+  "name": "webrtc-calling",
   "version": "1.0.0",
   "description": "A simple demo app for webrtc audio",
   "main": "server.js",
@@ -12,14 +12,19 @@
     "url": "git+https://github.com/agilityfeat/webrtc-audio-demo.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "bjjeong",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/agilityfeat/webrtc-audio-demo/issues"
   },
   "homepage": "https://github.com/agilityfeat/webrtc-audio-demo#readme",
   "dependencies": {
+    "body-parser": "^1.19.1",
+    "ejs": "^3.1.6",
     "express": "^4.16.2",
+    "express-session": "^1.17.2",
+    "node-mysql": "^0.4.2",
+    "pug": "^3.0.2",
     "socket.io": "^2.0.4"
   }
 }

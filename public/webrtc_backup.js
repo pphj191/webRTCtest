@@ -38,16 +38,23 @@ let caller = null;
 let receiver = null;
 
 $(document).ready(function () {
-    showHome();
-    $('#startBtn').click(function () {
-        socket.emit('create', function (res) {
-            console.log('send create');
-            $('#caller_code').val(res);
-            caller = res;
-            showCreate();
-            UIkit.tooltip('#caller_code').show();
-            navigator.mediaDevices.getUserMedia(streamConstraints).then(function (stream) {
-                addLocalStream(stream);
+    showHome();  
+    $('#loginBtn').click(function () { 
+        socket.emit('create', function (res) { 
+            
+            $('#caller_code').val(res); 
+            
+            const phone_number = $('#user_phone_number').val(); 
+            $('#phone_number').val(phone_number);
+            
+            socket.emit('save_number', phone_number);
+            caller = res; 
+
+            showCreate(); 
+            UIkit.tooltip('#caller_code').show(); 
+
+            navigator.mediaDevices.getUserMedia(streamConstraints).then(function (stream) { 
+                addLocalStream(stream); 
                 isCaller = true;
             }).catch(function (err) {
                 console.log('An error ocurred when accessing media devices', err);
@@ -55,28 +62,20 @@ $(document).ready(function () {
         });
     });
 
-    $('#joinBtn').click(function () {
-        showJoin();
-        UIkit.tooltip('#caller_code').show();
-    });
 
-    //---------------------------------------------------------------------------------------
-    //---------------------------------------------------------------------------------------
-    //---------------------------------------------------------------------------------------
-
-    $('#startCallBtn').click(function () {
+    $('#startCallBtn').click(function () { 
         showCallScreen();
     });
 
-    socket.on('ready', function (code) {
-        console.log('receiver ready at', code);
-        receiver = code;
-        createPeerConnection();
-        let offerOptions = {
-            offerToReceiveAudio: 1
+    socket.on('ready', function (code) { 
+        console.log('receiver ready at', code); 
+        receiver = code; 
+        createPeerConnection();  
+        let offerOptions = { 
+            offerToReceiveAudio: 1 
         }
-        rtcPeerConnection.createOffer(offerOptions)
-            .then(desc => setLocalAndOffer(desc))
+        rtcPeerConnection.createOffer(offerOptions) 
+            .then(desc => setLocalAndOffer(desc)) 
             .catch(e => console.log(e));
     });
 
@@ -84,12 +83,20 @@ $(document).ready(function () {
     //---------------------------------------------------------------------------------------
     //---------------------------------------------------------------------------------------
 
-    $('#joinCallBtn').click(function () {
-        showCallScreen();
-        const code = $('#join_code').val();
-        navigator.mediaDevices.getUserMedia(streamConstraints).then(function (stream) {
-            addLocalStream(stream);
-            socket.emit('join', code);
+    $('#joinCallBtn').click(function () { 
+        isCaller = false; 
+        showCallScreen(); 
+        
+        const friend_number = $('#friend_number').val(); 
+        
+        socket.emit('what is socket id', friend_number);
+        socket.on('tellyou', function (friend_socket_id){  
+            code = friend_socket_id;
+        });
+
+        navigator.mediaDevices.getUserMedia(streamConstraints).then(function (stream) { 
+            addLocalStream(stream); 
+            socket.emit('join', code); 
         }).catch(function (err) {
             console.log('An error ocurred when accessing media devices', err);
         });
@@ -132,22 +139,22 @@ socket.on('candidate', function (event) {
     rtcPeerConnection.addIceCandidate(candidate);
 });
 
-socket.on('offer', function (param) {
-    caller = param.caller;
-    createPeerConnection();
+socket.on('offer', function (param) { 
+    caller = param.caller; 
+    createPeerConnection(); 
     rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(param.event));
-    rtcPeerConnection.createAnswer()
-        .then(desc => setLocalAndAnswer(desc))
+    rtcPeerConnection.createAnswer() 
+        .then(desc => setLocalAndAnswer(desc)) 
         .catch(e => console.log(e));
 });
 
-socket.on('answer', function (event) {
+socket.on('answer', function (event) { 
     console.log(event);
     rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event));
 })
 
 function onIceCandidate(event) {
-    let id = isCaller ? receiver : caller;
+    let id = isCaller ? receiver : caller; 
     if (event.candidate) {
         socket.emit('candidate', {
             type: 'candidate',
@@ -164,23 +171,23 @@ function onAddStream(event) {
     remoteStream = event.stream;
 }
 
-function setLocalAndOffer(sessionDescription) {
+function setLocalAndOffer(sessionDescription) { 
     rtcPeerConnection.setLocalDescription(sessionDescription);
     console.log('sending offer to', receiver);
-    socket.emit('offer', {
+    socket.emit('offer', { 
         type: 'offer',
         sdp: sessionDescription,
-        receiver: receiver
+        receiver: receiver 
     });
 }
 
-function setLocalAndAnswer(sessionDescription) {
+function setLocalAndAnswer(sessionDescription) { 
     rtcPeerConnection.setLocalDescription(sessionDescription);
     console.log('sending answer to ', caller);
     socket.emit('answer', {
         type: 'answer',
         sdp: sessionDescription,
-        caller: caller
+        caller: caller 
     });
 }
 
@@ -191,7 +198,7 @@ function addLocalStream(stream) {
 
 function createPeerConnection() {
     rtcPeerConnection = new RTCPeerConnection(iceServers);
-    rtcPeerConnection.onicecandidate = onIceCandidate;
-    rtcPeerConnection.onaddstream = onAddStream;
-    rtcPeerConnection.addStream(localStream);
-}
+    rtcPeerConnection.onicecandidate = onIceCandidate; 
+    rtcPeerConnection.onaddstream = onAddStream; 
+    rtcPeerConnection.addStream(localStream);  
+} 
