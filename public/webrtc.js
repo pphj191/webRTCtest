@@ -1,3 +1,4 @@
+
 let socket = io();
 
 let localVideo = document.getElementById("localVideo");
@@ -194,4 +195,3 @@ function createPeerConnection() {
     rtcPeerConnection.onicecandidate = onIceCandidate;
     rtcPeerConnection.onaddstream = onAddStream;
     rtcPeerConnection.addStream(localStream);
-}

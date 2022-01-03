@@ -288,4 +288,3 @@ http.listen(3000, function () {
         }
     });
     // (EunDong) END: Login Page  
-});
