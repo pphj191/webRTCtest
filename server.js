@@ -1,8 +1,19 @@
 const express = require('express');
+const fs = require('fs');
 const app = express();
-var http = require('http').Server(app);
-var io = require('socket.io')(http); 
+const apphttp = express();
+
 app.use(express.static('public'));
+
+const options = { key: fs.readFileSync('./privkey.pem'), cert: fs.readFileSync('./public.pem') };
+var https = require('https').Server(options, app);
+var http = require('http').Server(app); 
+var io = require('socket.io')(https);
+
+apphttp.get('/', (req,res)=>{
+    // console.log(req.hostname, "==",req.url)
+    res.redirect('https://' + req.hostname + req.url);
+});
 
 // (EunDong) 2021.12.25  
 // (EunDong) ADD: body-parser , mysql , express-session 
@@ -183,11 +194,11 @@ io.on('connection', function (socket) {
 
 });
 
-var router_auth = require('./router/auth');
-app.use('/auth',router_auth);
+var router_auth = require('./router/auth'); // router import_phj
+app.use('/auth',router_auth);               // router로 내용을 이동 정리_phj
 
 app.get('/', function(req, res){
-    if (req.session.displayName == undefined){  // session 정보 없으면 redirect
+    if (req.session.displayName == undefined){  // session 정보 없으면 redirect_phj
         res.redirect('auth/login/')
     }
     else{
@@ -197,7 +208,7 @@ app.get('/', function(req, res){
 // (EunDong) END: Login Page  
 
 
-http.listen(3000, function () {
+https.listen(443, function () {
     console.log('listening on *:3000');
 
     // (EunDong) 2022.01.02  
@@ -211,4 +222,8 @@ http.listen(3000, function () {
         }
     });
     // (EunDong) END: Login Page
+});
+
+apphttp.listen(80, function () {
+    console.log('listening on *:80');
 });
